@@ -1,0 +1,102 @@
+local HttpService = game:GetService("HttpService")
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local Window = Rayfield:CreateWindow({
+    Name = "Nexis Key System",
+    LoadingTitle = "Nexis Key System",
+    LoadingSubtitle = "Authentication Required",
+    ConfigurationSaving = {
+        Enabled = false,
+    }
+})
+
+-- Supported games (using GameId, i.e., universe ID)
+local SupportedGames = {
+    [7436755782] = "Grow a Garden",
+    [8316902627] = "Plants Vs Brainrots",
+    [5578556129] = "Anime Vanguards",
+    [7709344486] = "Steal A Brainrot",
+    [7326934954] = "99 Nights in the Forest",
+    [994732206] = "Blox Fruits"
+}
+
+-- Check if current game is supported
+local isSupported = false
+print("Current GameId: " .. tostring(game.GameId)) -- Debug output
+for gameId, gameName in pairs(SupportedGames) do
+    if game.GameId == gameId then
+        Rayfield:Notify({
+            Title = "Game Supported",
+            Content = gameName .. " is supported!",
+            Duration = 5,
+            Actions = {}
+        })
+        isSupported = true
+        break
+    end
+end
+
+-- Notify if game is not supported
+if not isSupported then
+    Rayfield:Notify({
+        Title = "Game Not Supported",
+        Content = "This game is not supported by Nexis Key System. GameId: " .. tostring(game.GameId),
+        Duration = 5,
+        Actions = {}
+    })
+end
+
+local IsAuthenticated = false
+local EnteredKey = ""
+
+-- Create Key Tab
+local KeyTab = Window:CreateTab("Key System")
+
+-- Key Input
+KeyTab:CreateInput({
+    Name = "Enter Key",
+    Info = "Enter your access key",
+    PlaceholderText = "Input your key here...",
+    RemoveTextAfterFocusLost = false,
+    Callback = function(Text)
+        EnteredKey = Text -- store entered key
+    end
+})
+
+-- Submit Button
+KeyTab:CreateButton({
+    Name = "Submit Key",
+    Info = "Click to validate your key",
+    Callback = function()
+        if not EnteredKey or EnteredKey == "" then
+            Rayfield:Notify({
+                Title = "Error",
+                Content = "Please enter a key before submitting.",
+                Duration = 3,
+                Actions = {}
+            })
+            return
+        end
+
+        Rayfield:Notify({
+            Title = "Error",
+            Content = "Invalid key entered. Please try again.",
+            Duration = 3,
+            Actions = {}
+        })
+    end
+})
+
+-- Get Key Button
+KeyTab:CreateButton({
+    Name = "Get Key",
+    Info = "Click to copy the key retrieval link",
+    Callback = function()
+        setclipboard("https://link-target.net/1339614/MlbdnSKSz5KW")
+        Rayfield:Notify({
+            Title = "Link Copied",
+            Content = "Key retrieval link copied to clipboard! Visit https://link-target.net/1339614/MlbdnSKSz5KW to obtain a valid key.",
+            Duration = 5,
+            Actions = {}
+        })
+    end
+})
