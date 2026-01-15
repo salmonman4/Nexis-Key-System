@@ -1,0 +1,217 @@
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local MarketPlaceService = game:GetService("MarketplaceService")
+
+local KEY_URL = "https://link-target.net/1339614/MlbdnSKSz5KW"
+local CURRENT_GAME_NAME = MarketPlaceService:GetProductInfo(game.PlaceId).Name
+local CORRECT_KEY = "6eUI4BbLFe"
+
+local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+local setclipboard = setclipboard or function(text) print(text) end
+
+if PlayerGui:FindFirstChild("NexisHubUI") then PlayerGui.NexisHubUI:Destroy() end
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "NexisHubUI"
+ScreenGui.Parent = PlayerGui
+
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.BackgroundColor3 = Color3.fromRGB(4, 4, 4)
+MainFrame.Size = UDim2.new(0, 480, 0, 380)
+MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+MainFrame.BorderSizePixel = 0
+MainFrame.ClipsDescendants = true
+MainFrame.Parent = ScreenGui
+
+local MainCorner = Instance.new("UICorner", MainFrame)
+MainCorner.CornerRadius = UDim.new(0, 14)
+
+local MainStroke = Instance.new("UIStroke", MainFrame)
+MainStroke.Thickness = 2.5
+MainStroke.Color = Color3.fromRGB(20, 20, 20)
+MainStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+local Title = Instance.new("TextLabel", MainFrame)
+Title.Position = UDim2.new(0, 30, 0, 35)
+Title.Size = UDim2.new(0, 200, 0, 40)
+Title.Text = "ARBIX HUB"
+Title.Font = Enum.Font.GothamBlack
+Title.TextSize = 32
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.BackgroundTransparency = 1
+Title.TextXAlignment = "Left"
+
+local Info = Instance.new("TextLabel", MainFrame)
+Info.Position = UDim2.new(0, 30, 0, 68)
+Info.Size = UDim2.new(0, 300, 0, 20)
+Info.Text = CURRENT_GAME_NAME .. " is supported"
+Info.Font = Enum.Font.GothamMedium
+Info.TextSize = 13
+Info.TextColor3 = Color3.fromRGB(110, 110, 110)
+Info.BackgroundTransparency = 1
+Info.TextXAlignment = "Left"
+
+local ContentHold = Instance.new("Frame", MainFrame)
+ContentHold.Size = UDim2.new(1, -60, 0, 200)
+ContentHold.Position = UDim2.new(0.5, 0, 0, 130)
+ContentHold.AnchorPoint = Vector2.new(0.5, 0)
+ContentHold.BackgroundTransparency = 1
+
+local InputFrame = Instance.new("Frame", ContentHold)
+InputFrame.Size = UDim2.new(1, 0, 0, 55)
+InputFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+local InputStroke = Instance.new("UIStroke", InputFrame)
+InputStroke.Color = Color3.fromRGB(25, 25, 25)
+Instance.new("UICorner", InputFrame).CornerRadius = UDim.new(0, 10)
+
+local KeyBox = Instance.new("TextBox", InputFrame)
+KeyBox.Size = UDim2.new(1, -30, 1, 0)
+KeyBox.Position = UDim2.new(0.5, 0, 0.5, 0)
+KeyBox.AnchorPoint = Vector2.new(0.5, 0.5)
+KeyBox.BackgroundTransparency = 1
+KeyBox.PlaceholderText = "Enter your key here..."
+KeyBox.PlaceholderColor3 = Color3.fromRGB(50, 50, 50)
+KeyBox.Text = ""
+KeyBox.Font = Enum.Font.Gotham
+KeyBox.TextSize = 15
+KeyBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+KeyBox.TextXAlignment = "Left"
+
+local SubmitBtn = Instance.new("TextButton", ContentHold)
+SubmitBtn.Size = UDim2.new(1, 0, 0, 52)
+SubmitBtn.Position = UDim2.new(0.5, 0, 0, 75)
+SubmitBtn.AnchorPoint = Vector2.new(0.5, 0)
+SubmitBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+SubmitBtn.Text = "SUBMIT KEY"
+SubmitBtn.Font = Enum.Font.GothamBold
+SubmitBtn.TextSize = 15
+SubmitBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
+SubmitBtn.AutoButtonColor = false
+Instance.new("UICorner", SubmitBtn).CornerRadius = UDim.new(0, 10)
+
+local GetKeyBtn = Instance.new("TextButton", ContentHold)
+GetKeyBtn.Size = UDim2.new(1, 0, 0, 52)
+GetKeyBtn.Position = UDim2.new(0.5, 0, 0, 137)
+GetKeyBtn.AnchorPoint = Vector2.new(0.5, 0)
+GetKeyBtn.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+GetKeyBtn.Text = "GET KEY"
+GetKeyBtn.Font = Enum.Font.GothamBold
+GetKeyBtn.TextSize = 15
+GetKeyBtn.TextColor3 = Color3.fromRGB(210, 210, 210)
+GetKeyBtn.AutoButtonColor = false
+Instance.new("UICorner", GetKeyBtn).CornerRadius = UDim.new(0, 10)
+
+local NotifContainer = Instance.new("Frame", ScreenGui)
+NotifContainer.Size = UDim2.new(0, 280, 1, -40)
+NotifContainer.Position = UDim2.new(1, -300, 0, 20)
+NotifContainer.BackgroundTransparency = 1
+local NotifLayout = Instance.new("UIListLayout", NotifContainer)
+NotifLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom
+NotifLayout.Padding = UDim.new(0, 10)
+
+local function QuickTween(obj, goal, duration, style)
+	TweenService:Create(obj, TweenInfo.new(duration or 0.2, style or Enum.EasingStyle.Quart, Enum.EasingDirection.Out), goal):Play()
+end
+
+local function Notify(msg, success)
+	local n = Instance.new("CanvasGroup", NotifContainer)
+	n.Size = UDim2.new(1, 0, 0, 0)
+	n.BackgroundColor3 = Color3.fromRGB(12, 12, 12)
+	n.GroupTransparency = 1
+	Instance.new("UICorner", n).CornerRadius = UDim.new(0, 8)
+	
+	local s = Instance.new("UIStroke", n)
+	s.Color = success and Color3.fromRGB(46, 230, 140) or Color3.fromRGB(255, 80, 80)
+	s.Thickness = 1.2
+
+	local t = Instance.new("TextLabel", n)
+	t.Size = UDim2.new(1, -20, 0, 50)
+	t.Position = UDim2.new(0, 10, 0, 0)
+	t.BackgroundTransparency = 1
+	t.Text = msg
+	t.TextColor3 = Color3.fromRGB(255, 255, 255)
+	t.Font = Enum.Font.GothamMedium
+	t.TextSize = 13
+	t.TextXAlignment = "Left"
+
+	QuickTween(n, {Size = UDim2.new(1, 0, 0, 50), GroupTransparency = 0}, 0.3)
+	
+	task.delay(4, function()
+		QuickTween(n, {GroupTransparency = 1, Size = UDim2.new(1, 0, 0, 0)}, 0.4)
+		task.wait(0.4)
+		n:Destroy()
+	end)
+end
+
+local function ApplyInteractions(btn, hoverCol)
+	local defSize = btn.Size
+	local defCol = btn.BackgroundColor3
+	
+	btn.MouseEnter:Connect(function() QuickTween(btn, {BackgroundColor3 = hoverCol}, 0.1) end)
+	btn.MouseLeave:Connect(function() QuickTween(btn, {BackgroundColor3 = defCol}, 0.1) end)
+	
+	btn.MouseButton1Down:Connect(function()
+		QuickTween(btn, {Size = UDim2.new(defSize.X.Scale, defSize.X.Offset - 12, defSize.Y.Scale, defSize.Y.Offset - 6)}, 0.08)
+	end)
+	
+	btn.MouseButton1Up:Connect(function()
+		TweenService:Create(btn, TweenInfo.new(0.5, Enum.EasingStyle.Elastic, Enum.EasingDirection.Out), {Size = defSize}):Play()
+	end)
+end
+
+local function ExecuteScript()
+	local scriptSource = [[print("Successfully Authenticated Nexis Hub")]]
+	loadstring(scriptSource)()
+	ScreenGui:Destroy()
+end
+
+local function HandleAuthentication()
+	if KeyBox.Text == CORRECT_KEY then
+		Notify("Success! Loading script...", true)
+		task.wait(1)
+		ExecuteScript()
+	else
+		Notify("The key you entered is invalid.", false)
+	end
+end
+
+ApplyInteractions(SubmitBtn, Color3.fromRGB(235, 235, 235))
+ApplyInteractions(GetKeyBtn, Color3.fromRGB(25, 25, 25))
+
+SubmitBtn.MouseButton1Click:Connect(HandleAuthentication)
+
+GetKeyBtn.MouseButton1Click:Connect(function()
+	setclipboard(KEY_URL)
+	Notify("Key URL copied to clipboard!", true)
+end)
+
+local dragging, dragInput, dragStart, startPos
+local targetPos = MainFrame.Position
+
+MainFrame.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		dragStart = input.Position
+		startPos = MainFrame.Position
+	end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+	if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+		local delta = input.Position - dragStart
+		targetPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+	end
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end
+end)
+
+RunService.RenderStepped:Connect(function()
+	MainFrame.Position = MainFrame.Position:Lerp(targetPos, 0.15)
+end)
